@@ -9,22 +9,19 @@ return new class extends Migration{
 	 * Run the migrations.
 	 */
 	public function up(): void{
-		Schema::create('supplier_category', static function(Blueprint $table){
-			$table->uuid('supplier_id');
-			$table->uuid('category_id');
-			$table->primary([
-								'supplier_id',
-								'category_id'
-							]);
+		Schema::create('category_supplier', static function(Blueprint $table){
+			$table->foreignUuid('supplier_id')
+				  ->constrained()
+				  ->cascadeOnDelete();
+			$table->foreignUuid('category_id')
+				  ->constrained()
+				  ->cascadeOnDelete();
+			$table->timestamps();
 
-			$table->foreign('supplier_id')
-				  ->references('id')
-				  ->on('suppliers')
-				  ->onDelete('cascade');
-			$table->foreign('category_id')
-				  ->references('id')
-				  ->on('categories')
-				  ->onDelete('cascade');
+			$table->unique([
+							   'supplier_id',
+							   'category_id'
+						   ]);
 		});
 	}
 
