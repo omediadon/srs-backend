@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Brand extends Model{
-	use HasFactory, HasUuids;
+class Brand extends Authenticatable implements JWTSubject{
+	use HasFactory, HasUuids, Notifiable;
 
 	protected $fillable = [
 		'name',
@@ -21,5 +23,13 @@ class Brand extends Model{
 
 	public function category(): BelongsTo{
 		return $this->belongsTo(Category::class);
+	}
+
+	public function getJWTIdentifier(){
+		return $this->getKey();
+	}
+
+	public function getJWTCustomClaims(): array{
+		return [];
 	}
 }

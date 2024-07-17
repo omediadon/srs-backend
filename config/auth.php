@@ -44,6 +44,15 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+		// Keep users (api) guard for admins, maybe...
+		'brand'    => [
+			'driver'   => 'jwt',
+			'provider' => 'brands',
+		],
+		'supplier' => [
+			'driver'   => 'jwt',
+			'provider' => 'suppliers',
+		],
     ],
 
     /*
@@ -69,6 +78,14 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
+		'brands'    => [
+			'driver' => 'eloquent',
+			'model'  => App\Models\Brand::class,
+		],
+		'suppliers' => [
+			'driver' => 'eloquent',
+			'model'  => App\Models\Supplier::class,
+		],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
