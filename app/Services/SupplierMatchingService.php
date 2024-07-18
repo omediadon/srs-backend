@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Brand;
 use App\Models\BrandHistory;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Log;
 
 class SupplierMatchingService{
 
@@ -13,7 +14,7 @@ class SupplierMatchingService{
 		$categoryId = $brand->category->id;
 
 		// Get suppliers in the same category
-		$suppliers = Supplier::whereHas('categories', static function($query) use ($categoryId){
+		$suppliers = Supplier::with('products')->whereHas('categories', static function($query) use ($categoryId){
 			$query->where('categories.id', $categoryId);
 		})
 							 ->get();
@@ -26,7 +27,8 @@ class SupplierMatchingService{
 				$relevanceScore = 0;
 				foreach($supplier->products as $product){
 					foreach($searchTerms as $term){
-						if(stripos($product->name, $term) !== false || stripos($product->description, $term) !== false){
+						$search= $term['term'];
+						if(stripos($product->name, $search) !== false || stripos($product->description, $search) !== false){
 							$relevanceScore++;
 						}
 					}

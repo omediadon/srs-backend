@@ -23,7 +23,7 @@ class ProductController extends Controller implements HasMiddleware{
 	 * Display a listing of the resource.
 	 */
 	public function index(): JsonResponse{
-		$products = Product::with('supplier', 'category')
+		$products = Product::with('supplier', 'category')->where("visibility", true)
 						   ->get();
 
 		return response()->json($products);
@@ -40,11 +40,15 @@ class ProductController extends Controller implements HasMiddleware{
 		}
 
 		$products = Product::with('supplier', 'category')
-						   ->where('name', 'LIKE', "%{$request->term}%")
-						   ->orWhere('description', 'LIKE', "%{$request->term}%")
+						   ->where("visibility", true)
+						   ->where(static function($query) use ($request){
+							   $query->where('name', 'LIKE', "%{$request->term}%")
+									 ->orWhere('description', 'LIKE', "%{$request->term}%");
+						   })
+						   ->limit(10)
 						   ->get();
 
-		return response()->json($products, $products->isEmpty()
+		return response()->json(["products" => $products], $products->isEmpty()
 			? Response::HTTP_NOT_FOUND
 			: Response::HTTP_OK);
 	}
@@ -67,6 +71,7 @@ class ProductController extends Controller implements HasMiddleware{
 
 	/**
 	 * Display the specified resource.
+	 * @TODO: Needs attention :)
 	 */
 	public function show(Product $product): JsonResponse{
 		return response()->json($product);
