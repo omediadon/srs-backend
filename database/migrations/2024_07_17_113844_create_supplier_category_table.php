@@ -10,18 +10,21 @@ return new class extends Migration{
 	 */
 	public function up(): void{
 		Schema::create('category_supplier', static function(Blueprint $table){
-			$table->foreignUuid('supplier_id')
-				  ->constrained()
-				  ->cascadeOnDelete();
-			$table->foreignUuid('category_id')
-				  ->constrained()
-				  ->cascadeOnDelete();
-			$table->timestamps();
+			$table->uuid('supplier_id');
+			$table->uuid('category_id');
+			$table->primary([
+								'supplier_id',
+								'category_id'
+							]);
 
-			$table->unique([
-							   'supplier_id',
-							   'category_id'
-						   ]);
+			$table->foreign('supplier_id')
+				  ->references('id')
+				  ->on('suppliers')
+				  ->onDelete('cascade');
+			$table->foreign('category_id')
+				  ->references('id')
+				  ->on('categories')
+				  ->onDelete('cascade');
 		});
 	}
 

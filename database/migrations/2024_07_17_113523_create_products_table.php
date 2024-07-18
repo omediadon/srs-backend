@@ -14,10 +14,8 @@ return new class extends Migration{
 				  ->primary();
 			$table->string('name');
 			$table->text('description');
-			$table->foreignUlid('category_id')
-				  ->constrained();
-			$table->foreignUlid('supplier_id')
-				  ->constrained();
+			$table->uuid('category_id');
+			$table->uuid('supplier_id');
 			$table->json('colors')
 				  ->nullable();
 			$table->boolean('visibility')
@@ -28,6 +26,14 @@ return new class extends Migration{
 				  ->nullable();
 			$table->timestamps();
 
+			$table->foreign('category_id')
+				  ->references('id')
+				  ->on('categories')
+				  ->onDelete('cascade');
+			$table->foreign('supplier_id')
+				  ->references('id')
+				  ->on('suppliers')
+				  ->onDelete('cascade');
 		});
 	}
 
