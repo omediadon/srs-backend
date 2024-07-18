@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierSuggestionController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,18 @@ Route::prefix('brand')
 		 ]);
 	 });
 
+Route::apiResource('products', ProductController::class,)
+	 ->except([
+				  'update'
+			  ]);
+Route::middleware('auth:brand')
+	 ->post('/products/search', [
+		 ProductController::class,
+		 'search'
+	 ]);
 
-
-Route::apiResource('products', ProductController::class);
+Route::apiResource('categories', CategoryController::class)
+	 ->only([
+				'index',
+				'show'
+			]);

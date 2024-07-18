@@ -9,9 +9,6 @@ use App\Models\Supplier;
 class SupplierMatchingService{
 
 	public function getMatchingSuppliers(Brand $brand){
-		$brandHistory = BrandHistory::where('brand_id', $brand->id)
-									->first();
-
 		// Get the brand's category
 		$categoryId = $brand->category->id;
 
@@ -21,10 +18,10 @@ class SupplierMatchingService{
 		})
 							 ->get();
 
-		// If we have search history, use it to refine suggestions
-		if($brandHistory && !empty($brandHistory->search_history)){
-			$searchTerms = $brandHistory->search_history;
+		$searchTerms = (new BrandHistoryService())->getSearchHistory($brand->id);
 
+		// If we have search history, use it to refine suggestions
+		if(!empty($searchTerms)){
 			$suppliers = $suppliers->sortByDesc(function($supplier) use ($searchTerms){
 				$relevanceScore = 0;
 				foreach($supplier->products as $product){

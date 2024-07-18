@@ -5,13 +5,22 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller{
+	public static function middleware(): array{
+
+		return [
+			'auth:brand,supplier'
+		];
+	}
 	/**
 	 * Display a listing of the resource.
 	 */
-	public function index(){
-		//
+	public function index(): JsonResponse{
+		$categories = Category::all();
+
+		return response()->json($categories);
 	}
 
 	/**
@@ -31,8 +40,8 @@ class CategoryController extends Controller{
 	/**
 	 * Display the specified resource.
 	 */
-	public function show(Category $category){
-		//
+	public function show(Category $category): JsonResponse{
+		return response()->json($category);
 	}
 
 	/**

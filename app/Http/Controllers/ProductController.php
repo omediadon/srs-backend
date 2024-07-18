@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use App\Services\BrandHistoryService;
+use Auth;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
@@ -24,6 +27,26 @@ class ProductController extends Controller implements HasMiddleware{
 						   ->get();
 
 		return response()->json($products);
+	}
+
+	public function search(Request $request): JsonResponse{
+		if(!$request->hasAny('term')){
+			return response()->json(null, Response::HTTP_NOT_FOUND);
+		}
+
+		if(Auth::guard('brand')
+			   ->check()){
+			(new BrandHistoryService())->addSearchTerm(auth()->user(), $request->term);
+		}
+
+		$products = Product::with('supplier', 'category')
+						   ->where('name', 'LIKE', "%{$request->term}%")
+						   ->orWhere('description', 'LIKE', "%{$request->term}%")
+						   ->get();
+
+		return response()->json($products, $products->isEmpty()
+			? Response::HTTP_NOT_FOUND
+			: Response::HTTP_OK);
 	}
 
 	/**
@@ -45,8 +68,8 @@ class ProductController extends Controller implements HasMiddleware{
 	/**
 	 * Display the specified resource.
 	 */
-	public function show(Product $product){
-		//
+	public function show(Product $product): JsonResponse{
+		return response()->json($product);
 	}
 
 	/**
