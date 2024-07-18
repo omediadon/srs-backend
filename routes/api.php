@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierSuggestion;
 use Illuminate\Support\Facades\Route;
 
@@ -32,7 +33,6 @@ Route::prefix('brand')
 		 ]);
 	 });
 
-Route::get('/user', static function(){
-	return response()->json(auth()->user());
-})
-	 ->middleware('auth:api');
+
+
+Route::apiResource('products', ProductController::class);
