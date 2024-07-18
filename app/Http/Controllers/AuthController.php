@@ -16,6 +16,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use JWTAuth;
 
 class AuthController extends Controller implements HasMiddleware{
 	/**
@@ -28,7 +29,7 @@ class AuthController extends Controller implements HasMiddleware{
 	public static function middleware(): array{
 
 		return [
-			new Middleware('auth:api,brand,supplier', [
+			new Middleware('auth:brand,supplier', [
 				'except' => [
 					'login',
 					'register'
@@ -98,17 +99,19 @@ class AuthController extends Controller implements HasMiddleware{
 	 * Get the token array structure.
 	 *
 	 * @param string $token
-	 *
+	 * @param string|null $guard
 	 * @return JsonResponse
 	 */
 	protected function respondWithToken(string $token, ?string $guard = null): JsonResponse{
+		$user = Auth::guard($guard)->user();
 		$tokenData = [
 			'access_token' => $token,
 			'token_type'   => 'bearer',
 			'expires_in'   => Auth::guard($guard)
 								  ->factory()
 								  ->getTTL() * 60,
-			'user_type'    => $guard
+			'user_type'    => $guard,
+			'user'=>$user
 		];
 
 		return response()->json($tokenData);
@@ -193,7 +196,14 @@ class AuthController extends Controller implements HasMiddleware{
 	 * @return JsonResponse
 	 */
 	public function me(): JsonResponse{
-		return response()->json(auth()->user());
+		$guard = $this->guardName();
+		$user = Auth::guard($guard)->user();
+
+		return response()->json([
+									'status' => 'success',
+									'user' => $user,
+									'guard' => $guard,
+								]);
 	}
 
 	/**
