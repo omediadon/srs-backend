@@ -18,7 +18,7 @@ class SupplierMatchingService{
 		})
 							 ->get();
 
-		$searchTerms = (new BrandHistoryService())->getSearchHistory($brand->id);
+		$searchTerms = (new BrandHistoryService())->getSearchHistory($brand);
 
 		// If we have search history, use it to refine suggestions
 		if(!empty($searchTerms)){
