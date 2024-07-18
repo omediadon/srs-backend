@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\ProductAdded;
+use App\Events\ProductPriceChanged;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,4 +36,17 @@ class Product extends Model{
 	public function supplier(): BelongsTo{
 		return $this->belongsTo(Supplier::class);
 	}
+
+	protected static function booted(): void{
+		static::created(static function($product){
+			event(new ProductAdded($product));
+		});
+
+		static::updated(static function($product){
+			if($product->isDirty('price')){
+				event(new ProductPriceChanged($product, $product->getOriginal('price'), $product->price));
+			}
+		});
+	}
+
 }

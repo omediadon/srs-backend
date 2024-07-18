@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Brand;
 use App\Models\BrandHistory;
 use App\Models\Supplier;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controllers\Middleware;
 
 class SupplierSuggestion extends Controller{
@@ -16,8 +15,8 @@ class SupplierSuggestion extends Controller{
 		];
 	}
 
-	public function getSuggestions(Request $request){
-		$brand        = auth()->user();
+	public function getSuggestions(): JsonResponse{
+		$brand = auth('brand')->user();
 		$brandHistory = BrandHistory::where('brand_id',$brand->id )
 									->first();
 
