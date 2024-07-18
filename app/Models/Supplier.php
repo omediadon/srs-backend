@@ -22,6 +22,10 @@ class Supplier extends Authenticatable implements JWTSubject{
 		'logo'
 	];
 
+	protected $hidden = [
+		'password',
+	];
+
 	public function categories(): BelongsToMany{
 		return $this->belongsToMany(Category::class);
 	}
@@ -34,7 +38,7 @@ class Supplier extends Authenticatable implements JWTSubject{
 		return $this->getKey();
 	}
 
-	public function getJWTCustomClaims(){
+	public function getJWTCustomClaims(): array{
 		return [];
 	}
 }

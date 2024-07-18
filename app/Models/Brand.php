@@ -20,6 +20,9 @@ class Brand extends Authenticatable implements JWTSubject{
 		'category_id',
 		'logo'
 	];
+	protected $hidden = [
+		'password',
+	];
 
 	public function category(): BelongsTo{
 		return $this->belongsTo(Category::class);
