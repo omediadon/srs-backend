@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\SupplierSuggestion;
+use App\Http\Controllers\SupplierSuggestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')
@@ -28,7 +28,7 @@ Route::prefix('auth')
 Route::prefix('brand')
 	 ->group(static function(){
 		 Route::get('suggest', [
-			 SupplierSuggestion::class,
+			 SupplierSuggestionController::class,
 			 'getSuggestions'
 		 ]);
 	 });

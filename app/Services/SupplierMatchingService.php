@@ -1,23 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
+use App\Models\Brand;
 use App\Models\BrandHistory;
 use App\Models\Supplier;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controllers\Middleware;
 
-class SupplierSuggestion extends Controller{
-	public static function middleware(): array{
+class SupplierMatchingService{
 
-		return [
-			new Middleware('auth:brand')
-		];
-	}
-
-	public function getSuggestions(): JsonResponse{
-		$brand = auth('brand')->user();
-		$brandHistory = BrandHistory::where('brand_id',$brand->id )
+	public function getMatchingSuppliers(Brand $brand){
+		$brandHistory = BrandHistory::where('brand_id', $brand->id)
 									->first();
 
 		// Get the brand's category
@@ -47,11 +39,6 @@ class SupplierSuggestion extends Controller{
 			});
 		}
 
-		// You might want to paginate the results
-		return response()->json([
-									'suggestions' => $suppliers->take(10)
-															   ->values()
-															   ->all()
-								]);
+		return $suppliers;
 	}
 }
